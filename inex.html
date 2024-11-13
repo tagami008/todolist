@@ -1,0 +1,81 @@
+import React, { useState } from 'react';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { X } from 'lucide-react';
+
+const TodoApp = () => {
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
+
+  const addTodo = () => {
+    if (newTodo.trim() !== '') {
+      setTodos([...todos, { text: newTodo, completed: false }]);
+      setNewTodo('');
+    }
+  };
+
+  const toggleTodoComplete = (index) => {
+    const updatedTodos = [...todos];
+    updatedTodos[index].completed = !updatedTodos[index].completed;
+    setTodos(updatedTodos);
+  };
+
+  const deleteTodo = (index) => {
+    const updatedTodos = [...todos];
+    updatedTodos.splice(index, 1);
+    setTodos(updatedTodos);
+  };
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>TODO App</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Input
+              type="text"
+              placeholder="Add a new task"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addTodo()}
+            />
+            <Button onClick={addTodo}>Add</Button>
+          </div>
+          <div className="space-y-2">
+            {todos.map((todo, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={todo.completed}
+                    onChange={() => toggleTodoComplete(index)}
+                  />
+                  <span className={todo.completed ? 'line-through text-gray-500' : ''}>
+                    {todo.text}
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  onClick={() => deleteTodo(index)}
+                  className="p-1"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <div className="text-gray-500 text-sm">
+          {todos.filter((todo) => !todo.completed).length} tasks remaining
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default TodoApp;
